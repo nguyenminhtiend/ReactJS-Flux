@@ -6,8 +6,10 @@ var open = require('gulp-open');
 var browserify = require('browserify');
 var reactify = require('reactify');
 var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var concat = require('gulp-concat');
 var jshint = require('gulp-jshint');
+var uglify = require('gulp-uglify');
 
 var config = {
 	port: 8888,
@@ -15,6 +17,7 @@ var config = {
 	paths: {
 		html: './src/*.html',
 		js: './src/**/*.js',
+		jsx: './src/**/*.jsx',
 		css: [
 			'node_modules/bootstrap/dist/css/bootstrap.min.css',
 			'node_modules/bootstrap/dist/css/bootstrap-theme.min.css'	
@@ -50,6 +53,8 @@ gulp.task('js', function(){
 		.bundle()
 		.on('error', console.error.bind(console))
 		.pipe(source('bundle.js'))
+        .pipe(buffer())
+        .pipe(uglify())
 		.pipe(gulp.dest(config.paths.dist + '/scripts'))
 		.pipe(connect.reload());
 });
@@ -69,6 +74,7 @@ gulp.task('lint', function() {
 gulp.task('watch', function(){
 	gulp.watch(config.paths.html, ['html']);
 	gulp.watch(config.paths.js, ['js']);
+	gulp.watch(config.paths.jsx, ['js']);
 });
 
 gulp.task('default', ['html', 'js', 'css', 'lint','open', 'watch']);
