@@ -2,78 +2,49 @@ var React = require('react');
 var Pagination = require('../common/pagination.jsx');
 var SearchCriteria = require('../common/searchCriteria.jsx');
 var ItemPerPage = require('../common/itemPerPage.jsx');
-//var classNames = require('classnames');
+var TableHeader = require('../common/tableHeader.jsx');
+var http = require('../../services/http');
+
 var selectItems = [10, 25, 50, 100];
 
 var employees = [{ firstName: 'Lionel', lastName: 'Messi', email: 'messizip@gmail.com', phone: '12345498', department: 'Football', birthday: '02/03/1991' }];
 
-var Button = React.createClass({
-  render () {
-    var btnClass = 'btn btn-success';
-    return <button className={btnClass}>ABC</button>;
-  }
-});
-
-var TableHeader = React.createClass({
-    render: function () {
-        var sort = '';
-        if (this.props.data.sortAble == true) {
-            if (this.props.sortColumn != this.props.data.name) {
-                return (<th onClick={this.sort}>{this.props.data.display}<i className='fa fa-sort'></i></th>);
-            } else {
-                if (this.props.isAscending) {
-                    return (<th onClick={this.sort}>{this.props.data.display}<i className='fa fa-sort-asc'></i></th>);
-                } else {
-                    return (<th onClick={this.sort}>{this.props.data.display}<i className='fa fa-sort-desc'></i></th>);
-                }
-            }
-        } else {
-            return <th>{this.props.data.display}</th>
-        }
-    },
-    sort: function () {
-        var isAscending = false;
-        if (this.props.sortColumn == this.props.data.name) {
-            isAscending = !this.props.isAscending;
-        } else {
-            isAscending = true;
-        }
-        this.props.sort(this.props.data.name, isAscending);
-    }
-});
-
-
-var TableRow = React.createClass({
-    render: function () {
-        return (<tr>
-                    <td></td>
-                    <td>{this.props.data.firstName}</td>
-                    <td>{this.props.data.lastName}</td>
-                    <td>{this.props.data.email}</td>
-                    <td>{this.props.data.phone}</td>
-                    <td>{this.props.data.birthday}</td>
-                    <td>{this.props.data.department}</td>
-                    <td><button type="button" className="btn btn-success-outline btn-sm"><i className="fa fa-pencil-square-o"></i> Edit</button></td>
-                </tr>);
-    }
-});
-
 var Table = React.createClass({
     getInitialState: function () {
         return {
+            searchTerm: '',
+            currentPage: 1,
+            itemPerPage: 25,
             sortColumn: 'FirstName',
-            isAscending: true,
-            pageInfo: {
-                currentPage: 3,
-                totalPage: 4
-            }
+            sortAscending: true,
+            totalPage: 4,
+            dataGrid: []
         }
     },
+    componentWillMount: function () {
+        var data = [];
+        var url = 'http://localhost:1234/api/employee/?currentPage=1&itemPerPage=10&searchTerm=&sortAscending=false&sortColumn=FirstName';
+        http.get(url)
+            .then(function (data) {
+                this.setState({ dataGrid: data.listEmployee });
+                this.setState({ dataGrid: employees });
+            });
+
+    },
     eachHeader: function (header, index) {
-        return (<TableHeader key={index} data={header} sortColumn={this.state.sortColumn} sort={this.sort} isAscending={this.state.isAscending} />);
+        return (<TableHeader key={index} data={header} sortColumn={this.state.sortColumn} sort={this.sort} isAscending={this.state.sortAscending} />);
     },
     eachRow: function (dataRow, index) {
-        return (<TableRow data={dataRow} key={index} />);
+        return (<tr key={index}>
+                    <td></td>
+                    <td>{dataRow.firstName}</td>
+                    <td>{dataRow.lastName}</td>
+                    <td>{dataRow.email}</td>
+                    <td>{dataRow.phone}</td>
+                    <td>{dataRow.birthday}</td>
+                    <td>{dataRow.department}</td>
+                    <td><button type="button" className="btn btn-success-outline btn-sm"><i className="fa fa-pencil-square-o"></i> Edit</button></td>
+                </tr>);
     },
     sort: function (sortColumn, isAscending) {
         this.setState({ sortColumn: sortColumn, isAscending: isAscending });
@@ -85,6 +56,9 @@ var Table = React.createClass({
     },
     search: function(){
         alert('gasgagag');
+    },
+    itemPerPageChange: function (selectedItemPerPage) {
+        this.setState({ itemPerPage: selectedItemPerPage });
     },
     render: function () {
         var headers = [
@@ -103,7 +77,7 @@ var Table = React.createClass({
 		                    <SearchCriteria search={this.search} />
 	                    </div>
 	                    <div className="col-md-6">
-		                   <ItemPerPage data={selectItems} />
+		                   <ItemPerPage data={selectItems} selectedItem={this.state.itemPerPage} />
 	                    </div>
                     </div>
                     <table className="table table-striped table-hover">
@@ -114,12 +88,11 @@ var Table = React.createClass({
                         </tr>
                         <tbody>
                             {
-                                employees.map(this.eachRow)
+                                this.state.dataGrid.map(this.eachRow)
                             }
                         </tbody>
                     </table>
-                    <Button />
-                    <Pagination totalPage={this.state.pageInfo.totalPage} currentPage={this.state.pageInfo.currentPage} pageChange={this.pageChange} />
+                    <Pagination totalPage={this.state.totalPage} currentPage={this.state.currentPage} pageChange={this.pageChange} />
                 </div>
             );
     }

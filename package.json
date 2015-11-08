@@ -6,6 +6,7 @@
     "bootstrap": "^3.3.5",
     "browserify": "^11.2.0",
     "classnames": "^2.2.0",
+    "es6-promise": "^3.0.2",
     "flux": "^2.1.1",
     "font-awesome": "^4.4.0",
     "gulp": "^3.9.0",
@@ -19,6 +20,7 @@
     "react-dom": "^0.14.2",
     "react-router": "^0.13.5",
     "reactify": "^1.1.1",
+    "superagent": "^1.4.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
