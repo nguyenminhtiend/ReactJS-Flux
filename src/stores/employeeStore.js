@@ -33,17 +33,17 @@ var EmployeeStore = objectAssign({}, EventEmitter.prototype, {
 
 AppDispatcher.register(function (action) {
     switch (action.actionType) {
-        case EmployeeConstant.BOOK_EDIT:
+        case EmployeeConstant.EMPLOYEE_EDIT:
             editEmployee(action.employeeId);
             break;
-        case EmployeeConstant.BOOK_CANCEL:
+        case EmployeeConstant.EMPLOYEE_CANCEL:
             state.employee = {};
             EmployeeStore.emitChange();
             break;
-        case EmployeeConstant.BOOK_SAVE:
+        case EmployeeConstant.EMPLOYEE_SAVE:
             saveEmployee(action.employee);
             break;
-        case EmployeeConstant.BOOK_DELETE:
+        case EmployeeConstant.EMPLOYEE_DELETE:
             deleteEmployee(action.employeeId);
             break;
     }

@@ -3,3 +3,39 @@
 	float: right;	
 }
 
+table th i {
+    padding-left: 10px;
+    cursor: pointer;
+}
+.table {
+    margin-bottom: 0;
+}
+table th {
+    cursor: pointer;
+    background-color: #375a7f;
+    text-align: center;
+    color: white;
+}
+
+    table th:last-child:hover {
+        cursor: default;
+    }
+
+table tr td:last-child {
+    text-align: center;
+}
+
+.custom-right {
+    text-align: right;
+}
+
+.row {
+    margin-top: 15px;
+}
+.pagination {
+    margin: 0 0;
+}
+.cardImage {
+    height: 50px;
+    width: 50px;
+}

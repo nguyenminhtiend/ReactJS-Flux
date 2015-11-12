@@ -10,10 +10,10 @@ var TableHeader = React.createClass({
                 'fa fa-sort-desc': this.props.sortColumn == this.props.data.name && !this.props.isAscending
             });
             return (<th onClick={this.sort}>{this.props.data.display}<i className={sortClass}></i></th>);
-    } else {
+        } else {
             return <th>{this.props.data.display}</th>
-}
-},
+        }
+    },
     sort: function () {
         var isAscending = false;
         if (this.props.sortColumn == this.props.data.name) {

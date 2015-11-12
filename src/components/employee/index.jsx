@@ -1,64 +1,51 @@
 var React = require('react');
+var Time = require('react-time');
+var Router = require('react-router');
+var Link = Router.Link;
+
 var Pagination = require('../common/pagination.jsx');
 var SearchCriteria = require('../common/searchCriteria.jsx');
 var ItemPerPage = require('../common/itemPerPage.jsx');
 var TableHeader = require('../common/tableHeader.jsx');
-var http = require('../../services/http');
+var DisplayInfo = require('../common/displayInfo.jsx');
+
+var EmployeeConstant = require('../../constants/employeeConstant');
+var EmployeeIndexStore = require('../../stores/employeeIndexStore');
+var EmployeeAction = require('../../actions/employeeAction');
+
 
 var selectItems = [10, 25, 50, 100];
 
-var employees = [{ firstName: 'Lionel', lastName: 'Messi', email: 'messizip@gmail.com', phone: '12345498', department: 'Football', birthday: '02/03/1991' }];
-
 var Table = React.createClass({
     getInitialState: function () {
-        return {
-            searchTerm: '',
-            currentPage: 1,
-            itemPerPage: 25,
-            sortColumn: 'FirstName',
-            sortAscending: true,
-            totalPage: 4,
-            dataGrid: []
-        }
-    },
-    componentWillMount: function () {
-        var data = [];
-        var url = 'http://localhost:1234/api/employee/?currentPage=1&itemPerPage=10&searchTerm=&sortAscending=false&sortColumn=FirstName';
-        http.get(url)
-            .then(function (data) {
-                this.setState({ dataGrid: data.listEmployee });
-                this.setState({ dataGrid: employees });
-            });
-
+        return EmployeeIndexStore.getState();
     },
     eachHeader: function (header, index) {
-        return (<TableHeader key={index} data={header} sortColumn={this.state.sortColumn} sort={this.sort} isAscending={this.state.sortAscending} />);
+        return (<TableHeader key={index} data={header} sortColumn={this.state.dataRequest.sortColumn} sort={this.sort} isAscending={this.state.dataRequest.sortAscending} />);
     },
     eachRow: function (dataRow, index) {
         return (<tr key={index}>
-                    <td></td>
+                    <td><img className="cardImage" src={EmployeeConstant.URL_RESOURCE + dataRow.avatar} alt="Customer Image" /></td>
                     <td>{dataRow.firstName}</td>
                     <td>{dataRow.lastName}</td>
                     <td>{dataRow.email}</td>
                     <td>{dataRow.phone}</td>
-                    <td>{dataRow.birthday}</td>
+                    <td><Time value={dataRow.birthday} format="DD/MM/YYYY" /></td>
                     <td>{dataRow.department}</td>
-                    <td><button type="button" className="btn btn-success-outline btn-sm"><i className="fa fa-pencil-square-o"></i> Edit</button></td>
+                    <td><Link to="employeeDetail" params={{id: dataRow.id}} className="btn btn-primary btn-xs"><i className="fa fa-pencil-square-o"></i> Edit</Link></td>
                 </tr>);
     },
     sort: function (sortColumn, isAscending) {
-        this.setState({ sortColumn: sortColumn, isAscending: isAscending });
+        EmployeeAction.sorting(sortColumn, isAscending);
     },
     pageChange: function(page){
-        var pageInfo = this.state.pageInfo;
-        pageInfo.currentPage = page;
-        this.setState({ pageInfo: pageInfo });
+        EmployeeAction.paging(page);
     },
-    search: function(){
-        alert('gasgagag');
+    search: function(searchTerm){
+        EmployeeAction.search(searchTerm);
     },
-    itemPerPageChange: function (selectedItemPerPage) {
-        this.setState({ itemPerPage: selectedItemPerPage });
+    changeItemPerPage: function (selectedItemPerPage) {
+        EmployeeAction.changeItemPerPage(selectedItemPerPage);
     },
     render: function () {
         var headers = [
@@ -70,32 +57,55 @@ var Table = React.createClass({
                         { name: 'Birthday', display: 'Birthday', sortAble: true },
                         { name: 'Department', display: 'Department', sortAble: true },
                         { name: '', display: '', sortAble: false }
-                    ];
+        ];
         return (<div>
                     <div className="row">
 	                    <div className="col-md-6">
 		                    <SearchCriteria search={this.search} />
 	                    </div>
 	                    <div className="col-md-6">
-		                   <ItemPerPage data={selectItems} selectedItem={this.state.itemPerPage} />
+		                   <ItemPerPage data={selectItems} selectedItem={this.state.itemPerPage} onChange={this.changeItemPerPage} />
 	                    </div>
                     </div>
-                    <table className="table table-striped table-hover">
+                    <div className="row">
+	                    <div className="col-md-12">
+		                    <table className="table table-striped table-hover table-bordered">
                         <tr>
                             {
-                                headers.map(this.eachHeader)
+                            headers.map(this.eachHeader)
                             }
                         </tr>
                         <tbody>
                             {
-                                this.state.dataGrid.map(this.eachRow)
+                            this.state.dataGrid.map(this.eachRow)
                             }
                         </tbody>
-                    </table>
-                    <Pagination totalPage={this.state.totalPage} currentPage={this.state.currentPage} pageChange={this.pageChange} />
+		                    </table>
+	                    </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-4">
+                            <DisplayInfo currentPage={this.state.dataRequest.currentPage} itemPerPage={this.state.dataRequest.itemPerPage} totalItems={this.state.totalItems} />
+                        </div>
+                        <div className="col-md-8 custom-right">
+                            <Pagination totalPage={this.state.totalPage} currentPage={this.state.dataRequest.currentPage} pageChange={this.pageChange} />
+                        </div>
+                    </div>
                 </div>
             );
-    }
+    },
+    componentWillMount: function(){
+        EmployeeIndexStore.init();
+    },
+    componentWillUnmount: function () {
+        EmployeeIndexStore.removeChangeListener(this._onChange);
+    },
+    componentDidMount: function () {
+        EmployeeIndexStore.addChangeListener(this._onChange);
+    },
+    _onChange: function () {
+        this.setState(EmployeeIndexStore.getState());
+    },
 });
 
 module.exports = Table;
