@@ -10,6 +10,7 @@ var routes = (
 		<DefaultRoute handler={require('./components/homePage.jsx')} />
 		<Route name="about" handler={require('./components/about/aboutPage.jsx')} />
         <Route name="employee" handler={require('./components/employee/index.jsx')} />
+        <Route name="addEmployee" handler={require('./components/employee/detail.jsx')} />
         <Route name="employeeDetail" path="employeeDetail/:id" handler={require('./components/employee/detail.jsx')} />
 	</Route>
 );

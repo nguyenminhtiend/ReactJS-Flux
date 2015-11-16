@@ -15,6 +15,7 @@ var Header = React.createClass({
 						<li><Link to="app">Home</Link></li>
 						<li><Link to="about">About</Link></li>
 						<li><Link to="employee">Employee</Link></li>
+                        <li><Link to="addEmployee">Add Employee</Link></li>
 					</ul>
 					</div>
 				</div>

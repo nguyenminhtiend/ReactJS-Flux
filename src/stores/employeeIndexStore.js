@@ -14,7 +14,8 @@ var state = {
     },
     totalPage: 0,
     totalItems: 0,
-    dataGrid: []
+    dataGrid: [],
+    isOpen: false
 };
 
 var EmployeeIndexStore = objectAssign({}, EventEmitter.prototype, {
@@ -54,6 +55,10 @@ AppDispatcher.register(function (action) {
         case EmployeeConstant.EMPLOYEE_CHANGE_ITEM_PER_PAGE:
             state.dataRequest.itemPerPage = action.itemPerPage;
             searchEmployee();
+            break;
+        case EmployeeConstant.EMPLOYEE_CONFIRM_DELETE:
+            state.isOpen = action.isOpen;
+            EmployeeIndexStore.emitChange();
             break;
     }
     return true;

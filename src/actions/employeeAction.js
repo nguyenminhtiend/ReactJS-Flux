@@ -44,6 +44,12 @@ var EmployeeActions = {
             actionType: EmployeeConstant.EMPLOYEE_CANCEL
         });
     },
+    confirmDelete: function (isOpen) {
+        AppDispatcher.dispatch({
+            actionType: EmployeeConstant.EMPLOYEE_CONFIRM_DELETE,
+            isOpen: isOpen
+        });
+    },
     delete: function (employeeId) {
         AppDispatcher.dispatch({
             actionType: EmployeeConstant.EMPLOYEE_DELETE,

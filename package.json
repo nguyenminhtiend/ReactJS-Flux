@@ -18,6 +18,7 @@
     "gulp-react": "^3.0.1",
     "moment": "^2.10.6",
     "react": "^0.14.0",
+    "react-datepicker": "^0.15.2",
     "react-dom": "^0.14.2",
     "react-router": "^0.13.5",
     "react-time": "^4.0.0",

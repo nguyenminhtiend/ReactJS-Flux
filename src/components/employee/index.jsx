@@ -32,20 +32,29 @@ var Table = React.createClass({
                     <td>{dataRow.phone}</td>
                     <td><Time value={dataRow.birthday} format="DD/MM/YYYY" /></td>
                     <td>{dataRow.department}</td>
-                    <td><Link to="employeeDetail" params={{id: dataRow.id}} className="btn btn-primary btn-xs"><i className="fa fa-pencil-square-o"></i> Edit</Link></td>
-                </tr>);
+                    <td>
+                        <Link to="employeeDetail" params={{id: dataRow.id}} className="btn btn-primary btn-xs right_space"><i className="fa fa-pencil-square-o"></i> Edit</Link>
+                        <button type="button" onClick={this.confirmDelete} className="btn btn-danger btn-xs"><i className="icon-remove-sign"></i> Delete</button>
+                    </td>
+        </tr>);
     },
     sort: function (sortColumn, isAscending) {
         EmployeeAction.sorting(sortColumn, isAscending);
     },
-    pageChange: function(page){
+    pageChange: function (page) {
         EmployeeAction.paging(page);
     },
-    search: function(searchTerm){
+    search: function (searchTerm) {
         EmployeeAction.search(searchTerm);
     },
     changeItemPerPage: function (selectedItemPerPage) {
         EmployeeAction.changeItemPerPage(selectedItemPerPage);
+    },
+    confirmDelete: function () {
+        this.setState({ isOpen: true });
+    },
+    closeModel: function () {
+
     },
     render: function () {
         var headers = [
@@ -70,16 +79,18 @@ var Table = React.createClass({
                     <div className="row">
 	                    <div className="col-md-12">
 		                    <table className="table table-striped table-hover table-bordered">
-                        <tr>
-                            {
-                            headers.map(this.eachHeader)
-                            }
-                        </tr>
-                        <tbody>
-                            {
-                            this.state.dataGrid.map(this.eachRow)
-                            }
-                        </tbody>
+                                <thead>
+                                    <tr>
+                                        {
+                                        headers.map(this.eachHeader)
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                    this.state.dataGrid.map(this.eachRow)
+                                    }
+                                </tbody>
 		                    </table>
 	                    </div>
                     </div>
@@ -91,10 +102,10 @@ var Table = React.createClass({
                             <Pagination totalPage={this.state.totalPage} currentPage={this.state.dataRequest.currentPage} pageChange={this.pageChange} />
                         </div>
                     </div>
-                </div>
+        </div>
             );
     },
-    componentWillMount: function(){
+    componentWillMount: function () {
         EmployeeIndexStore.init();
     },
     componentWillUnmount: function () {

@@ -21,6 +21,7 @@ var config = {
 			'node_modules/bootstrap/dist/css/bootstrap.min.css',
 			'node_modules/bootstrap/dist/css/bootstrap-theme.min.css',
 			'node_modules/font-awesome/css/font-awesome.min.css',
+            'node_modules/react-datepicker/dist/react-datepicker.min.css',
 			'./src/css/custom.css'
         ],
         fonts: 'node_modules/font-awesome/fonts/*.{otf,eot,svg,ttf,woff,woff2}',

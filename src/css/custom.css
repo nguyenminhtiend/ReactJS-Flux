@@ -39,3 +39,6 @@ table tr td:last-child {
     height: 50px;
     width: 50px;
 }
+.right_space {
+    margin-right: 10px;
+}
