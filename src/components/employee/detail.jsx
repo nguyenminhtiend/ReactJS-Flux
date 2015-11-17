@@ -1,12 +1,17 @@
 var React = require('react');
-
+var EmployeeAction = require('../../actions/employeeAction');
 var DateTimeInput = require('../common/form-control/dateTimeInput.jsx');
 var TextInput = require('../common/form-control/textInput.jsx');
 var DropDownList = require('../common/form-control/dropDownList.jsx');
+var Router = require('react-router');
+var EmployeeIndexStore = require('../../stores/employeeDetailStore');
 
 var departments = [{ id: 1, name: 'IT' }, { id: 2, name: 'FPO' }];
 
 var DetailEmployee = React.createClass({
+    mixins: [
+        Router.Navigation
+    ],
     getInitialState: function () {
         return {
             employeeDetail: {
@@ -15,12 +20,10 @@ var DetailEmployee = React.createClass({
                 lastName: '',
                 email: '',
                 phone: '',
-                birthday: '',
-                department: 0
+                birthday: '11/11/2013',
+                departmentId: 1
             },
-            errors: {
-
-            }
+            errors: {}
         }
     },
     onChange: function (event) {
@@ -54,7 +57,10 @@ var DetailEmployee = React.createClass({
         return isValid;
     },
     save: function(){
-
+        if (this.isFormValid()) {
+            EmployeeAction.save(this.state.employeeDetail);
+            //this.transitionTo('employee');
+        }
     },
     render: function () {
         return (
@@ -64,10 +70,10 @@ var DetailEmployee = React.createClass({
                 <TextInput name="email" placeholder="Input Email" label="Email:" onChange={this.onChange} value={this.state.employeeDetail.email} error={this.state.errors.email} />
                 <TextInput name="phone" placeholder="Input Phone" label="Phone:" onChange={this.onChange} value={this.state.employeeDetail.phone} error={this.state.errors.phone}/>
                 <DateTimeInput name="birthday" placeholder="Click to select Birthday" label="Birthday:" onChange={this.onChange} value={this.state.employeeDetail.birthday} />
-                <DropDownList name="department" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={departments} value={this.state.employeeDetail.department} />
+                <DropDownList name="department" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={departments} value={this.state.employeeDetail.departmentId} />
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
-                        <button className="btn btn-info right_space" onClick={this.isFormValid}><i className="fa fa-floppy-o"></i> Save</button>
+                        <button className="btn btn-info right_space" onClick={this.save}><i className="fa fa-floppy-o"></i> Save</button>
                         <button className="btn btn-danger">Cancel</button>
                     </div>
                 </div>
