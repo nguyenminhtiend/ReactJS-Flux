@@ -10,7 +10,7 @@ var DropDownList = React.createClass({
 
         return (
             <FormInput name={this.props.name} label={this.props.label} error={this.props.error}>
-                <select className="form-control" value={this.props.value} ref={this.props.name} onChange={this.props.onChange}>
+                <select className="form-control" name={this.props.name} value={this.props.value} ref={this.props.name} onChange={this.props.onChange}>
                     {options}
                 </select>
             </FormInput>

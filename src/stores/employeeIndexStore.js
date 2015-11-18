@@ -22,7 +22,7 @@ var EmployeeIndexStore = objectAssign({}, EventEmitter.prototype, {
     getState: function () {
         return state;
     },
-    init: function() {
+    init: function () {
         searchEmployee();
     },
     emitChange: function () {
@@ -40,21 +40,7 @@ var EmployeeIndexStore = objectAssign({}, EventEmitter.prototype, {
 AppDispatcher.register(function (action) {
     switch (action.actionType) {
         case EmployeeConstant.EMPLOYEE_SEARCH:
-            state.dataRequest.searchTerm = action.searchTerm;
-            searchEmployee();
-            break;
-        case EmployeeConstant.EMPLOYEE_PAGING:
-            state.dataRequest.currentPage = action.page;
-            searchEmployee();
-            break;
-        case EmployeeConstant.EMPLOYEE_SORTING:
-            state.dataRequest.sortColumn = action.sortColumn;
-            state.dataRequest.sortAscending = action.isAscending;
-            searchEmployee();
-            break;
-        case EmployeeConstant.EMPLOYEE_CHANGE_ITEM_PER_PAGE:
-            state.dataRequest.itemPerPage = action.itemPerPage;
-            searchEmployee();
+            searchEmployee(action);
             break;
         case EmployeeConstant.EMPLOYEE_CONFIRM_DELETE:
             state.isOpen = action.isOpen;
@@ -64,15 +50,12 @@ AppDispatcher.register(function (action) {
     return true;
 });
 
-var searchEmployee = function () {
-    var url = EmployeeConstant.URL + 'api/employee/';
-    http.getWithParam(url, state.dataRequest)
-        .then(function (data) {
-            state.dataGrid = data.listEmployee;
-            state.totalPage = Math.floor(data.totalItems / state.dataRequest.itemPerPage) + 1;
-            state.totalItems = data.totalItems;
-            EmployeeIndexStore.emitChange();
-        });
+var searchEmployee = function (payload) {
+    state.dataRequest = payload.searchCriteria;
+    state.dataGrid = payload.result.listEmployee;
+    state.totalPage = Math.floor(payload.result.totalItems / state.dataRequest.itemPerPage) + 1;
+    state.totalItems = payload.result.totalItems;
+    EmployeeIndexStore.emitChange();
 };
 
 module.exports = EmployeeIndexStore;

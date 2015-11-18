@@ -10,13 +10,12 @@ var InputDateTime = React.createClass({
         label: React.PropTypes.string.isRequired,
         onChange: React.PropTypes.func.isRequired,
         placeholder: React.PropTypes.string,
-        value: React.PropTypes.string,
         error: React.PropTypes.string,
     },
     render: function () {
         return (
             <FormInput name={this.props.name} label={this.props.label} error={this.props.error}>
-                <DatePicker dateFormat={Constant.DATE_FORMAT} className="form-control" placeholderText={this.props.placeholder} />
+                <DatePicker dateFormat={Constant.DATE_FORMAT} selected={this.props.value} name={this.props.name} className="form-control" onChange={this.props.onChange} placeholderText={this.props.placeholder} />
             </FormInput>
         )
 }

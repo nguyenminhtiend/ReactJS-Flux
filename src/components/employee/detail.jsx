@@ -4,7 +4,9 @@ var DateTimeInput = require('../common/form-control/dateTimeInput.jsx');
 var TextInput = require('../common/form-control/textInput.jsx');
 var DropDownList = require('../common/form-control/dropDownList.jsx');
 var Router = require('react-router');
-var EmployeeIndexStore = require('../../stores/employeeDetailStore');
+var EmployeeDetailStore = require('../../stores/employeeDetailStore');
+var moment = require('moment');
+var Constant = require('../../constants/employeeConstant');
 
 var departments = [{ id: 1, name: 'IT' }, { id: 2, name: 'FPO' }];
 
@@ -13,24 +15,18 @@ var DetailEmployee = React.createClass({
         Router.Navigation
     ],
     getInitialState: function () {
-        return {
-            employeeDetail: {
-                id: 0,
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                birthday: '11/11/2013',
-                departmentId: 1
-            },
-            errors: {}
-        }
+        return EmployeeDetailStore.getState();
     },
     onChange: function (event) {
         var employeeDetail = this.state.employeeDetail;
         var field = event.target.name;
         var value = event.target.value;
         employeeDetail[field] = value;
+        this.setState({ employeeDetail: employeeDetail });
+    },
+    onBirthdayChange: function (birthday) {
+        var employeeDetail = this.state.employeeDetail;
+        employeeDetail.birthday = birthday;
         this.setState({ employeeDetail: employeeDetail });
     },
     isFormValid: function () {
@@ -58,8 +54,9 @@ var DetailEmployee = React.createClass({
     },
     save: function(){
         if (this.isFormValid()) {
-            EmployeeAction.save(this.state.employeeDetail);
-            //this.transitionTo('employee');
+            var employeeDetail = this.state.employeeDetail;
+            employeeDetail.birthday = employeeDetail.birthday.format(Constant.DATE_FORMAT);
+            EmployeeAction.save(employeeDetail);
         }
     },
     render: function () {
@@ -69,8 +66,8 @@ var DetailEmployee = React.createClass({
                 <TextInput name="lastName" placeholder="Input Last Name" onChange={this.onChange} label="Last Name:" value={this.state.employeeDetail.lastName} error={this.state.errors.lastName} />
                 <TextInput name="email" placeholder="Input Email" label="Email:" onChange={this.onChange} value={this.state.employeeDetail.email} error={this.state.errors.email} />
                 <TextInput name="phone" placeholder="Input Phone" label="Phone:" onChange={this.onChange} value={this.state.employeeDetail.phone} error={this.state.errors.phone}/>
-                <DateTimeInput name="birthday" placeholder="Click to select Birthday" label="Birthday:" onChange={this.onChange} value={this.state.employeeDetail.birthday} />
-                <DropDownList name="department" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={departments} value={this.state.employeeDetail.departmentId} />
+                <DateTimeInput name="birthday" placeholder="Click to select Birthday" label="Birthday:" onChange={this.onBirthdayChange} value={this.state.employeeDetail.birthday} />
+                <DropDownList name="departmentId" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={departments} value={this.state.employeeDetail.departmentId} />
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
                         <button className="btn btn-info right_space" onClick={this.save}><i className="fa fa-floppy-o"></i> Save</button>
@@ -79,7 +76,23 @@ var DetailEmployee = React.createClass({
                 </div>
             </div>
         )
-    }
+    },
+    componentWillMount: function () {
+
+    },
+    componentWillUnmount: function () {
+        EmployeeDetailStore.removeChangeListener(this._onChange);
+    },
+    componentDidMount: function () {
+        EmployeeDetailStore.addChangeListener(this._onChange);
+    },
+    _onChange: function () {
+        var state = EmployeeDetailStore.getState();
+        this.setState(state);
+        if (state.saveCompleted) {
+            this.transitionTo('employee');
+        }
+    },
 });
 
 module.exports = DetailEmployee;

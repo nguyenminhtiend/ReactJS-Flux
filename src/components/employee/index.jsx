@@ -12,7 +12,7 @@ var DisplayInfo = require('../common/displayInfo.jsx');
 var EmployeeConstant = require('../../constants/employeeConstant');
 var EmployeeIndexStore = require('../../stores/employeeIndexStore');
 var EmployeeAction = require('../../actions/employeeAction');
-
+var Constant = require('../../constants/employeeConstant');
 
 var selectItems = [10, 25, 50, 100];
 
@@ -30,7 +30,7 @@ var Table = React.createClass({
                     <td>{dataRow.lastName}</td>
                     <td>{dataRow.email}</td>
                     <td>{dataRow.phone}</td>
-                    <td><Time value={dataRow.birthday} format="DD/MM/YYYY" /></td>
+                    <td><Time value={dataRow.birthday} format={Constant.DATE_FORMAT} /></td>
                     <td>{dataRow.department}</td>
                     <td>
                         <Link to="employeeDetail" params={{id: dataRow.id}} className="btn btn-primary btn-xs right_space"><i className="fa fa-pencil-square-o"></i> Edit</Link>
@@ -39,16 +39,25 @@ var Table = React.createClass({
         </tr>);
     },
     sort: function (sortColumn, isAscending) {
-        EmployeeAction.sorting(sortColumn, isAscending);
+        var searchCriteria = this.state.dataRequest;
+        searchCriteria.sortColumn = sortColumn;
+        searchCriteria.sortAscending = isAscending;
+        EmployeeAction.search(searchCriteria);
     },
     pageChange: function (page) {
-        EmployeeAction.paging(page);
+        var searchCriteria = this.state.dataRequest;
+        searchCriteria.currentPage = page;
+        EmployeeAction.search(searchCriteria);
     },
     search: function (searchTerm) {
-        EmployeeAction.search(searchTerm);
+        var searchCriteria = this.state.dataRequest;
+        searchCriteria.searchTerm = searchTerm;
+        EmployeeAction.search(searchCriteria);
     },
     changeItemPerPage: function (selectedItemPerPage) {
-        EmployeeAction.changeItemPerPage(selectedItemPerPage);
+        var searchCriteria = this.state.dataRequest;
+        searchCriteria.itemPerPage = selectedItemPerPage;
+        EmployeeAction.search(searchCriteria);
     },
     confirmDelete: function () {
         this.setState({ isOpen: true });
@@ -106,7 +115,7 @@ var Table = React.createClass({
             );
     },
     componentWillMount: function () {
-        EmployeeIndexStore.init();
+        EmployeeAction.search(this.state.dataRequest);
     },
     componentWillUnmount: function () {
         EmployeeIndexStore.removeChangeListener(this._onChange);

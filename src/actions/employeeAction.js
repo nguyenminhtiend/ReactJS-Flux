@@ -1,36 +1,35 @@
 ﻿var EmployeeConstant = require('../constants/employeeConstant');
 var AppDispatcher = require('../dispatcher/AppDispatcher');
+var Constant = require('../constants/employeeConstant');
+var http = require('../services/http');
+
+var getEmployees = function (searchCriteria) {
+    var url = Constant.URL + 'api/employee/';
+    return http.getWithParam(url, searchCriteria);
+};
+
+var saveEmployee = function (employee) {
+    var url = EmployeeConstant.URL + 'api/employee/';
+    return http.post(url, employee);
+};
 
 var EmployeeActions = {
-    search: function (searchTerm) {
-        AppDispatcher.dispatch({
-            actionType: EmployeeConstant.EMPLOYEE_SEARCH,
-            searchTerm: searchTerm
-        });
-    },
-    paging: function (page) {
-        AppDispatcher.dispatch({
-            actionType: EmployeeConstant.EMPLOYEE_PAGING,
-            page: page
-        });
-    },
-    sorting: function (sortColumn, isAscending) {
-        AppDispatcher.dispatch({
-            actionType: EmployeeConstant.EMPLOYEE_SORTING,
-            sortColumn: sortColumn,
-            isAscending: isAscending
-        });
-    },
-    changeItemPerPage: function (itemPerPage) {
-        AppDispatcher.dispatch({
-            actionType: EmployeeConstant.EMPLOYEE_CHANGE_ITEM_PER_PAGE,
-            itemPerPage: itemPerPage
+    search: function (searchCriteria) {
+        getEmployees(searchCriteria)
+        .then(function (result) {
+            AppDispatcher.dispatch({
+                actionType: EmployeeConstant.EMPLOYEE_SEARCH,
+                searchCriteria: searchCriteria,
+                result: result
+            }); 
         });
     },
     save: function (employee) {
-        AppDispatcher.dispatch({
-            actionType: EmployeeConstant.EMPLOYEE_SAVE,
-            employee: employee
+        saveEmployee(employee)
+        .then(function (result) {
+            AppDispatcher.dispatch({
+                actionType: EmployeeConstant.EMPLOYEE_SAVE
+            });
         });
     },
     edit: function (employeeId) {
