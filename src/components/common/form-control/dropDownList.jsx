@@ -5,7 +5,7 @@ var DropDownList = React.createClass({
     
     render: function () {
         var options = this.props.dataSource.map(function(item) {
-            return <option key={item.id} value={item.id}>{item.name}</option>
+            return <option key={item.value} value={item.value}>{item.text}</option>
         });
 
         return (

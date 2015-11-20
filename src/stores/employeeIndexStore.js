@@ -14,16 +14,26 @@ var state = {
     },
     totalPage: 0,
     totalItems: 0,
-    dataGrid: [],
-    isOpen: false
+    dataGrid: []
 };
 
 var EmployeeIndexStore = objectAssign({}, EventEmitter.prototype, {
     getState: function () {
         return state;
     },
-    init: function () {
-        searchEmployee();
+    setDefaultState: function () {
+        state = {
+            dataRequest: {
+                searchTerm: '',
+                currentPage: 1,
+                itemPerPage: 10,
+                sortColumn: 'FirstName',
+                sortAscending: true
+            },
+            totalPage: 0,
+            totalItems: 0,
+            dataGrid: []
+        };
     },
     emitChange: function () {
         this.emit('change');
@@ -51,7 +61,6 @@ AppDispatcher.register(function (action) {
 });
 
 var searchEmployee = function (payload) {
-    state.dataRequest = payload.searchCriteria;
     state.dataGrid = payload.result.listEmployee;
     state.totalPage = Math.floor(payload.result.totalItems / state.dataRequest.itemPerPage) + 1;
     state.totalItems = payload.result.totalItems;

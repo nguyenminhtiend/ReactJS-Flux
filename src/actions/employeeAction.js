@@ -2,30 +2,39 @@
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var Constant = require('../constants/employeeConstant');
 var http = require('../services/http');
-
-var getEmployees = function (searchCriteria) {
-    var url = Constant.URL + 'api/employee/';
-    return http.getWithParam(url, searchCriteria);
-};
-
-var saveEmployee = function (employee) {
-    var url = EmployeeConstant.URL + 'api/employee/';
-    return http.post(url, employee);
-};
+var url = Constant.URL + 'api/employee/';
 
 var EmployeeActions = {
-    search: function (searchCriteria) {
-        getEmployees(searchCriteria)
+    getById: function (id) {
+        http.get(url + id)
         .then(function (result) {
             AppDispatcher.dispatch({
-                actionType: EmployeeConstant.EMPLOYEE_SEARCH,
-                searchCriteria: searchCriteria,
-                result: result
-            }); 
+                actionType: EmployeeConstant.EMPLOYEE_GET_BY_ID,
+                employee: result
+            });
         });
     },
+    getDepartments: function () {
+        http.get(url + 'getDepartments')
+        .then(function (result) {
+            AppDispatcher.dispatch({
+                actionType: EmployeeConstant.EMPLOYEE_GET_ALL_DEPARTMENTS,
+                departments: result
+            });
+        });
+    },
+    search: function (searchCriteria) {
+        http.getWithParam(url, searchCriteria)
+            .then(function (result) {
+                AppDispatcher.dispatch({
+                    actionType: EmployeeConstant.EMPLOYEE_SEARCH,
+                    searchCriteria: searchCriteria,
+                    result: result
+                }); 
+            });
+    },
     save: function (employee) {
-        saveEmployee(employee)
+        http.post(url, employee)
         .then(function (result) {
             AppDispatcher.dispatch({
                 actionType: EmployeeConstant.EMPLOYEE_SAVE

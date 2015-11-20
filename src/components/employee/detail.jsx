@@ -8,8 +8,6 @@ var EmployeeDetailStore = require('../../stores/employeeDetailStore');
 var moment = require('moment');
 var Constant = require('../../constants/employeeConstant');
 
-var departments = [{ id: 1, name: 'IT' }, { id: 2, name: 'FPO' }];
-
 var DetailEmployee = React.createClass({
     mixins: [
         Router.Navigation
@@ -67,7 +65,7 @@ var DetailEmployee = React.createClass({
                 <TextInput name="email" placeholder="Input Email" label="Email:" onChange={this.onChange} value={this.state.employeeDetail.email} error={this.state.errors.email} />
                 <TextInput name="phone" placeholder="Input Phone" label="Phone:" onChange={this.onChange} value={this.state.employeeDetail.phone} error={this.state.errors.phone}/>
                 <DateTimeInput name="birthday" placeholder="Click to select Birthday" label="Birthday:" onChange={this.onBirthdayChange} value={this.state.employeeDetail.birthday} />
-                <DropDownList name="departmentId" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={departments} value={this.state.employeeDetail.departmentId} />
+                <DropDownList name="departmentId" placeholder="Input Department" label="Department:" onChange={this.onChange} dataSource={this.state.departments} value={this.state.employeeDetail.departmentId} />
                 <div className="form-group">
                     <div className="col-sm-offset-2 col-sm-10">
                         <button className="btn btn-info right_space" onClick={this.save}><i className="fa fa-floppy-o"></i> Save</button>
@@ -78,7 +76,12 @@ var DetailEmployee = React.createClass({
         )
     },
     componentWillMount: function () {
-
+        EmployeeDetailStore.setDefaultState();
+        EmployeeAction.getDepartments();
+        var employeeId = this.props.params.id;
+        if (employeeId) {
+            EmployeeAction.getById(employeeId);
+        }
     },
     componentWillUnmount: function () {
         EmployeeDetailStore.removeChangeListener(this._onChange);

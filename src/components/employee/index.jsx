@@ -14,8 +14,6 @@ var EmployeeIndexStore = require('../../stores/employeeIndexStore');
 var EmployeeAction = require('../../actions/employeeAction');
 var Constant = require('../../constants/employeeConstant');
 
-var selectItems = [10, 25, 50, 100];
-
 var Table = React.createClass({
     getInitialState: function () {
         return EmployeeIndexStore.getState();
@@ -82,7 +80,7 @@ var Table = React.createClass({
 		                    <SearchCriteria search={this.search} />
 	                    </div>
 	                    <div className="col-md-6">
-		                   <ItemPerPage data={selectItems} selectedItem={this.state.itemPerPage} onChange={this.changeItemPerPage} />
+		                   <ItemPerPage data={Constant.selectItems} selectedItem={this.state.itemPerPage} onChange={this.changeItemPerPage} />
 	                    </div>
                     </div>
                     <div className="row">
@@ -115,7 +113,8 @@ var Table = React.createClass({
             );
     },
     componentWillMount: function () {
-        EmployeeAction.search(this.state.dataRequest);
+        EmployeeIndexStore.setDefaultState()
+        EmployeeAction.search(EmployeeIndexStore.getState().dataRequest);
     },
     componentWillUnmount: function () {
         EmployeeIndexStore.removeChangeListener(this._onChange);

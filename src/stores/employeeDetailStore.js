@@ -2,7 +2,6 @@
 var EventEmitter = require('events').EventEmitter;
 var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EmployeeConstant = require('../constants/employeeConstant');
-var http = require('../services/http');
 var moment = require('moment');
 
 var state = {
@@ -15,6 +14,7 @@ var state = {
         birthday: new moment(),
         departmentId: 1
     },
+    departments : [],
     errors: {},
     saveCompleted: false
 };
@@ -22,6 +22,22 @@ var state = {
 var EmployeeDetailStore = objectAssign({}, EventEmitter.prototype, {
     getState: function () {
         return state;
+    },
+    setDefaultState: function(){
+        state = {
+            employeeDetail: {
+                id: 0,
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                birthday: new moment(),
+                departmentId: 1
+            },
+            departments: [],
+            errors: {},
+            saveCompleted: false
+        };
     },
     emitChange: function () {
         this.emit('change');
@@ -37,15 +53,19 @@ var EmployeeDetailStore = objectAssign({}, EventEmitter.prototype, {
 AppDispatcher.register(function (action) {
     switch (action.actionType) {
         case EmployeeConstant.EMPLOYEE_SAVE:
-            saveEmployee();
+            state.saveCompleted = true;
+            break;
+        case EmployeeConstant.EMPLOYEE_GET_BY_ID:
+            var employee = action.employee;
+            employee.birthday = new moment(employee.birthday);
+            state.employeeDetail = employee;
+            break;
+        case EmployeeConstant.EMPLOYEE_GET_ALL_DEPARTMENTS:
+            state.departments = action.departments;
             break;
     }
+    EmployeeDetailStore.emitChange();
     return true;
 });
-
-var saveEmployee = function () {
-    state.saveCompleted = true;
-    EmployeeDetailStore.emitChange();
-};
 
 module.exports = EmployeeDetailStore;
