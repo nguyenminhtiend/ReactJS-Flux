@@ -52,7 +52,7 @@ var DetailEmployee = React.createClass({
     },
     save: function(){
         if (this.isFormValid()) {
-            var employeeDetail = this.state.employeeDetail;
+            var employeeDetail = Object.assign({}, this.state.employeeDetail); ;
             employeeDetail.birthday = employeeDetail.birthday.format(Constant.DATE_FORMAT);
             EmployeeAction.save(employeeDetail);
         }

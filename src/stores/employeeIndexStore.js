@@ -4,7 +4,7 @@ var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EmployeeConstant = require('../constants/employeeConstant');
 var http = require('../services/http');
 
-var state = {
+var defaultState = {
     dataRequest: {
         searchTerm: '',
         currentPage: 1,
@@ -17,23 +17,16 @@ var state = {
     dataGrid: []
 };
 
+var state = Object.assign({}, defaultState);
+state.dataRequest = Object.assign({}, defaultState.dataRequest);
+
 var EmployeeIndexStore = objectAssign({}, EventEmitter.prototype, {
     getState: function () {
         return state;
     },
     setDefaultState: function () {
-        state = {
-            dataRequest: {
-                searchTerm: '',
-                currentPage: 1,
-                itemPerPage: 10,
-                sortColumn: 'FirstName',
-                sortAscending: true
-            },
-            totalPage: 0,
-            totalItems: 0,
-            dataGrid: []
-        };
+        state = Object.assign({}, defaultState);
+        state.dataRequest = Object.assign({}, defaultState.dataRequest);
     },
     emitChange: function () {
         this.emit('change');

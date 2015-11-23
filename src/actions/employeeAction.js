@@ -34,8 +34,13 @@ var EmployeeActions = {
             });
     },
     save: function (employee) {
-        http.post(url, employee)
-        .then(function (result) {
+        var promise;
+        if (employee.id) {
+            promise = http.put(url + employee.id, employee);
+        } else {
+            promise = http.post(url, employee);
+        }
+        promise.then(function (result) {
             AppDispatcher.dispatch({
                 actionType: EmployeeConstant.EMPLOYEE_SAVE
             });

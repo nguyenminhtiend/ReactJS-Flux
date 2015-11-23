@@ -4,7 +4,7 @@ var AppDispatcher = require('../dispatcher/AppDispatcher');
 var EmployeeConstant = require('../constants/employeeConstant');
 var moment = require('moment');
 
-var state = {
+var defaultState = {
     employeeDetail: {
         id: 0,
         firstName: '',
@@ -14,30 +14,19 @@ var state = {
         birthday: new moment(),
         departmentId: 1
     },
-    departments : [],
+    departments: [],
     errors: {},
     saveCompleted: false
 };
+
+var state = Object.assign({}, defaultState);
 
 var EmployeeDetailStore = objectAssign({}, EventEmitter.prototype, {
     getState: function () {
         return state;
     },
     setDefaultState: function(){
-        state = {
-            employeeDetail: {
-                id: 0,
-                firstName: '',
-                lastName: '',
-                email: '',
-                phone: '',
-                birthday: new moment(),
-                departmentId: 1
-            },
-            departments: [],
-            errors: {},
-            saveCompleted: false
-        };
+        state = Object.assign({}, defaultState);
     },
     emitChange: function () {
         this.emit('change');
